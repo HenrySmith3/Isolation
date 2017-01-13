@@ -12,12 +12,30 @@ class IsolationGame:
             player = self.player1 if player1turn else self.player2
 
             #X instead of number on the old move
+            hasposition = False
+            position = ""
             if hasattr(player, 'position'):
-                oldmove = player.position
-                self.grid[oldmove[0]][oldmove[1]] = "X"
+                hasposition = True
+                position = player.position
+                self.grid[position[0]][position[1]] = "X"
 
             #make the move
-            move = player.move(self)
+            moveaccepted = False
+            while (not moveaccepted):
+                move = player.move(self)
+                if (move[0] >= 0 and
+                    move[0] <= 4 and
+                    move[1] >= 0 and
+                    move[1] <= 4):
+                    if not hasposition:
+                        moveaccepted = True
+                    else:
+                        if (move[0] >= position[0]-1 and
+                            move[0] <= position[0]+1 and
+                            move[1] >= position[1]-1 and
+                            move[1] <= position[1]+1 and
+                            self.grid[move[0]][move[1]] == " "):
+                                moveaccepted = True
             self.grid[move[0]][move[1]] = "1" if player1turn else "2"
             player.position = move
             player1turn = not player1turn
