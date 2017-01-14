@@ -1,5 +1,6 @@
 from IsolationGame import *
 from HumanPlayer import *
+from RandomAI import *
 
-game = IsolationGame(HumanPlayer(), HumanPlayer())
+game = IsolationGame(HumanPlayer(), RandomAI())
 game.playGame()

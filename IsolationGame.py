@@ -8,10 +8,10 @@ class IsolationGame:
         self.grid = [[" "]*5 for i in range(5)]
 
     def playGame(self):
-        player1turn = True
-        while(self.moveIsPossible(player1turn)):
-            self.printboard(player1turn)
-            player = self.player1 if player1turn else self.player2
+        self.player1turn = True
+        while(self.moveIsPossible()):
+            self.printboard()
+            player = self.player1 if self.player1turn else self.player2
 
             #X instead of number on the old move
             position = ""
@@ -25,11 +25,11 @@ class IsolationGame:
                 print "Invalid move!"
                 move = player.move(self)
             player.hasmoved = True
-            self.grid[move[0]][move[1]] = "1" if player1turn else "2"
+            self.grid[move[0]][move[1]] = "1" if self.player1turn else "2"
             player.position = move
-            player1turn = not player1turn
+            self.player1turn = not self.player1turn
 
-        if (player1turn):
+        if (self.player1turn):
             print "player 2 won!"
         else:
             print "player 1 won!"
@@ -75,8 +75,25 @@ class IsolationGame:
             movecopy[1] += ydirection
         return True
 
+    def generatePossibleMoves(self):
+        player = self.player1 if self.player1turn else self.player2
+        moves = []
+        if not player.hasmoved:
+            for i in range(5):
+                for j in range(5):
+                    moves.append([i,j])
+            return moves
+        position = player.position
+        for x in [-1,0,1]:
+            for y in [-1,0,1]:
+                move = [player.position[0] + x, player.position[1] + y]
+                while (self.isMoveValid(player, move)):
+                    moves.append([move[0],move[1]])
+                    move[0] += x
+                    move[1] += y
+        return moves
 
-    def printboard(self, player1turn):
+    def printboard(self):
         boardstring = "  0  1  2  3  4"
         for i in range(5):
             boardstring += "\n"
@@ -84,9 +101,9 @@ class IsolationGame:
             for j in range(5):
                 boardstring += '[' + self.grid[j][i] + ']'
         print boardstring
-        print "Player " + ("1" if player1turn else "2") + "'s turn"
-    def moveIsPossible(self, player1turn):
-        player = self.player1 if player1turn else self.player2
+        print "Player " + ("1" if self.player1turn else "2") + "'s turn"
+    def moveIsPossible(self):
+        player = self.player1 if self.player1turn else self.player2
         if not hasattr(player, 'position'):
             return True
         position = player.position
